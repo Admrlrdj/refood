@@ -6,35 +6,30 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        // Diubah menjadi tabel Admin
-        Schema::create('users', function (Blueprint $table) {
+        // Tabel khusus Admin
+        Schema::connection('mongodb')->create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('username')->unique(); // Tambah username biar gampang login
+            $table->string('username')->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['superadmin', 'staff'])->default('staff'); // Role khusus internal admin
+            $table->enum('role', ['superadmin', 'staff'])->default('staff');
             $table->rememberToken();
             $table->timestamps();
         });
 
-        // Tetap biarkan ini untuk fitur reset password admin
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
+        Schema::connection('mongodb')->create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
-        // Tetap biarkan ini untuk manajemen session login
-        Schema::create('sessions', function (Blueprint $table) {
+        Schema::connection('mongodb')->create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            $table->string('user_id')->nullable()->index(); // Ubah ke string untuk ObjectId MongoDB
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
@@ -42,13 +37,10 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
+        Schema::connection('mongodb')->dropIfExists('users');
+        Schema::connection('mongodb')->dropIfExists('password_reset_tokens');
+        Schema::connection('mongodb')->dropIfExists('sessions');
     }
 };

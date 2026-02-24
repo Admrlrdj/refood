@@ -2,14 +2,13 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-use App\Models\Foods;
+use App\Http\Controllers\Api\AuthController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-
-Route::get('/foods', function () {
-    return Foods::all();
-});
+// Route Auth Relawan
+Route::post('/register/volunteer', [AuthController::class, 'registerVolunteer']);
+Route::post('/login/volunteer', [AuthController::class, 'loginVolunteer']);
+Route::get('/volunteers', [AuthController::class, 'getVolunteers']);
