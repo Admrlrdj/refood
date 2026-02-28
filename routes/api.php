@@ -11,4 +11,3 @@ Route::get('/user', function (Request $request) {
 // Route Auth Relawan
 Route::post('/register/volunteer', [AuthController::class, 'registerVolunteer']);
 Route::post('/login/volunteer', [AuthController::class, 'loginVolunteer']);
-Route::get('/volunteers', [AuthController::class, 'getVolunteers']);

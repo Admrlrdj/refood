@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\User;
+namespace App\Models;
 
 use MongoDB\Laravel\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;

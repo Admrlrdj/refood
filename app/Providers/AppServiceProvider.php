@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Foundation\AliasLoader;
+use Laravel\Sanctum\Sanctum;
+// use MongoDB\Laravel\Sanctum\PersonalAccessToken;
+use App\Models\PersonalAccessToken;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,8 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $loader = AliasLoader::getInstance();
-        // using custom PersonalAccessToken model instead of Sanctum's
-        $loader->alias(\Laravel\Sanctum\PersonalAccessToken::class, \App\Models\PersonalAccessToken::class);
+        // 3. Paksa Sanctum untuk memakai koleksi MongoDB, bukan tabel SQL
+        Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
     }
 }
