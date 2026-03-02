@@ -11,7 +11,7 @@
                 'vehicle_type' => $v->vehicle_type,
                 'latitude' => $v->last_latitude,
                 'longitude' => $v->last_longitude,
-                'is_verified' => (bool) $v->is_verified,
+                'is_verified' => (bool) $v->is_verified, // Hanya gunakan boolean ini
             ];
         });
     @endphp
@@ -87,7 +87,6 @@
             </div>
         @endif
 
-
         <div x-data="volunteerTable()">
 
             <div x-show="isModalOpen" x-cloak style="display: none;"
@@ -133,42 +132,59 @@
                         <div>
                             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Jenis
                                 Kendaraan</label>
-                            <select name="vehicle_type" required
-                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:text-white">
-                                <option value="" disabled selected>Pilih Kendaraan</option>
-                                <option value="Motor">Motor</option>
-                                <option value="Mobil">Mobil</option>
-                                <option value="Sepeda">Sepeda</option>
-                            </select>
+                            <div x-data="{ isOptionSelected: false }" class="relative z-20 bg-transparent">
+                                <select name="vehicle_type" required
+                                    class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
+                                    :class="isOptionSelected && 'text-gray-800 dark:text-white/90'"
+                                    @change="isOptionSelected = true">
+                                    <option value="" disabled selected
+                                        class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">Pilih Kendaraan</option>
+                                    <option value="Motor" class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">Motor
+                                    </option>
+                                    <option value="Mobil" class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">Mobil
+                                    </option>
+                                    <option value="Sepeda" class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">
+                                        Sepeda</option>
+                                </select>
+                                <span
+                                    class="pointer-events-none absolute top-1/2 right-4 z-30 -translate-y-1/2 text-gray-700 dark:text-gray-400">
+                                    <svg class="stroke-current" width="20" height="20" viewBox="0 0 20 20"
+                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4.79175 7.396L10.0001 12.6043L15.2084 7.396" stroke=""
+                                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </span>
+                            </div>
                         </div>
 
                         <div class="pt-2 border-t border-gray-100 dark:border-gray-800">
                             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Titik Lokasi
-                                (Opsional)</label>
+                                Relawan (OpenStreetMap)</label>
                             <div class="flex gap-2 mb-3">
                                 <input id="mapSearchInput" type="text"
-                                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2 text-sm text-gray-800 focus:border-brand-500 dark:border-gray-700 dark:text-white"
-                                    placeholder="Cari alamat...">
+                                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2 text-sm text-gray-800 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:text-white shadow-theme-xs"
+                                    placeholder="Cari alamat atau nama tempat... (Contoh: Monas)">
                                 <button type="button" id="btnSearchMap"
-                                    class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 transition">Cari</button>
+                                    class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 transition shadow-theme-xs whitespace-nowrap">Cari
+                                    Peta</button>
                             </div>
                             <div id="modalMap"
-                                class="w-full h-[200px] rounded-lg border border-gray-300 bg-gray-100 relative"></div>
-                            <input type="hidden" name="latitude" id="inputLatitude" value="-6.200000">
-                            <input type="hidden" name="longitude" id="inputLongitude" value="106.816666">
+                                class="w-full h-[250px] rounded-lg border border-gray-300 dark:border-gray-700 relative bg-gray-100">
+                            </div>
+                            <input type="hidden" name="latitude" id="inputLatitude" required>
+                            <input type="hidden" name="longitude" id="inputLongitude" required>
                         </div>
 
-                        <div class="mt-6 flex justify-end gap-3 pt-3">
+                        <div class="mt-6 flex justify-end gap-3 pt-3 border-t border-gray-100 dark:border-gray-800">
                             <button type="button" @click="isModalOpen = false"
-                                class="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">Batal</button>
+                                class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03] transition">Batal</button>
                             <button type="submit"
-                                class="rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600">Simpan
+                                class="rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 transition shadow-theme-xs">Simpan
                                 Data</button>
                         </div>
                     </form>
                 </div>
             </div>
-
 
             <div x-show="isEditModalOpen" x-cloak style="display: none;"
                 class="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity p-4">
@@ -214,12 +230,25 @@
                         <div>
                             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Jenis
                                 Kendaraan</label>
-                            <select name="vehicle_type" x-model="editForm.vehicle_type" required
-                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:text-white">
-                                <option value="Motor">Motor</option>
-                                <option value="Mobil">Mobil</option>
-                                <option value="Sepeda">Sepeda</option>
-                            </select>
+                            <div class="relative z-20 bg-transparent">
+                                <select name="vehicle_type" x-model="editForm.vehicle_type" required
+                                    class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 text-gray-800 dark:text-white/90">
+                                    <option value="Motor" class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">Motor
+                                    </option>
+                                    <option value="Mobil" class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">Mobil
+                                    </option>
+                                    <option value="Sepeda" class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">
+                                        Sepeda</option>
+                                </select>
+                                <span
+                                    class="pointer-events-none absolute top-1/2 right-4 z-30 -translate-y-1/2 text-gray-700 dark:text-gray-400">
+                                    <svg class="stroke-current" width="20" height="20" viewBox="0 0 20 20"
+                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4.79175 7.396L10.0001 12.6043L15.2084 7.396" stroke=""
+                                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </span>
+                            </div>
                         </div>
 
                         <div class="pt-2 border-t border-gray-100 dark:border-gray-800">
@@ -238,9 +267,9 @@
                             <input type="hidden" name="longitude" id="editInputLongitude" x-model="editForm.longitude">
                         </div>
 
-                        <div class="mt-6 flex justify-end gap-3 pt-3">
+                        <div class="mt-6 flex justify-end gap-3 pt-3 border-t border-gray-100 dark:border-gray-800">
                             <button type="button" @click="isEditModalOpen = false"
-                                class="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">Batal</button>
+                                class="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">Batal</button>
                             <button type="submit"
                                 class="rounded-lg bg-warning-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-warning-600">Update
                                 Data</button>
@@ -249,12 +278,10 @@
                 </div>
             </div>
 
-
             <div x-show="isDeleteModalOpen" x-cloak style="display: none;"
                 class="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity p-4">
                 <div @click.away="isDeleteModalOpen = false"
                     class="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark text-center">
-
                     <div
                         class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-error-50 text-error-500 dark:bg-error-500/10">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -264,21 +291,16 @@
                             </path>
                         </svg>
                     </div>
-
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-white/90 mb-2">Hapus Relawan?</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                        Apakah Anda yakin ingin menghapus relawan bernama <span
-                            class="font-bold text-gray-800 dark:text-white" x-text="deleteForm.name"></span>? Data yang
-                        dihapus tidak dapat dikembalikan.
-                    </p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Apakah Anda yakin ingin menghapus relawan
+                        bernama <span class="font-bold text-gray-800 dark:text-white" x-text="deleteForm.name"></span>
+                        secara permanen?</p>
 
                     <div class="flex justify-center gap-3">
                         <button type="button" @click="isDeleteModalOpen = false"
                             class="w-full rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]">Batal</button>
-
                         <form :action="'/admin/volunteers/' + deleteForm.id" method="POST" class="w-full m-0">
-                            @csrf
-                            @method('DELETE')
+                            @csrf @method('DELETE')
                             <button type="submit"
                                 class="w-full rounded-lg bg-error-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-error-600 transition shadow-theme-xs">Ya,
                                 Hapus!</button>
@@ -286,6 +308,8 @@
                     </div>
                 </div>
             </div>
+
+
             <div class="rounded-2xl border border-gray-200 bg-white pt-4 dark:border-gray-800 dark:bg-white/[0.03]">
                 <div class="flex flex-col gap-4 px-5 mb-4 md:flex-row md:items-center md:justify-between sm:px-6">
                     <div>
@@ -381,20 +405,27 @@
                                                 </template>
                                             </div>
                                         </td>
+
                                         <td class="px-4 py-4 whitespace-nowrap">
-                                            <span x-show="v.is_verified"
-                                                class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500">Terverifikasi</span>
-                                            <span x-show="!v.is_verified"
-                                                class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-warning-50 text-warning-600 dark:bg-warning-500/15 dark:text-orange-400">Menunggu</span>
+                                            <template x-if="v.is_verified">
+                                                <span
+                                                    class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500">Terverifikasi</span>
+                                            </template>
+                                            <template x-if="!v.is_verified">
+                                                <span
+                                                    class="px-2.5 py-1 inline-flex text-xs font-semibold rounded-full bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-500">Belum
+                                                    / Ditolak</span>
+                                            </template>
                                         </td>
+
                                         <td class="px-4 py-4 text-sm font-medium text-right whitespace-nowrap">
                                             <div class="flex items-center justify-end space-x-3">
 
-                                                <template x-if="!v.is_verified">
-                                                    <div class="flex space-x-2">
+                                                <div class="flex space-x-2">
+                                                    <template x-if="!v.is_verified">
                                                         <form :action="'/admin/volunteers/' + v.id + '/verify'"
                                                             method="POST" class="inline">
-                                                            @csrf <button type="submit" title="Terima"
+                                                            @csrf <button type="submit" title="Terima / Verifikasi"
                                                                 class="text-success-600 hover:bg-success-50 border border-success-200 px-2 py-1.5 rounded-lg text-xs font-medium transition dark:border-success-500/20 dark:text-success-500"><svg
                                                                     class="w-4 h-4" fill="none" stroke="currentColor"
                                                                     viewBox="0 0 24 24">
@@ -402,9 +433,12 @@
                                                                         stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                                 </svg></button>
                                                         </form>
+                                                    </template>
+
+                                                    <template x-if="v.is_verified">
                                                         <form :action="'/admin/volunteers/' + v.id + '/reject'"
                                                             method="POST" class="inline">
-                                                            @csrf <button type="submit" title="Tolak"
+                                                            @csrf <button type="submit" title="Tolak / Batal Verifikasi"
                                                                 class="text-error-600 hover:bg-error-50 border border-error-200 px-2 py-1.5 rounded-lg text-xs font-medium transition dark:border-error-500/20 dark:text-error-500"><svg
                                                                     class="w-4 h-4" fill="none" stroke="currentColor"
                                                                     viewBox="0 0 24 24">
@@ -412,10 +446,10 @@
                                                                         stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                                 </svg></button>
                                                         </form>
-                                                    </div>
-                                                </template>
-                                                <template x-if="!v.is_verified"><span
-                                                        class="h-5 w-px bg-gray-300 dark:bg-gray-700"></span></template>
+                                                    </template>
+                                                </div>
+
+                                                <span class="h-5 w-px bg-gray-300 dark:bg-gray-700"></span>
 
                                                 <button type="button" @click="openEditModal(v)" title="Edit Data"
                                                     class="text-gray-500 hover:text-warning-500 dark:text-gray-400 dark:hover:text-warning-400 transition">
@@ -477,7 +511,6 @@
     <script>
         let map, marker, editMap, editMarker;
 
-        // Map Create
         function initLeafletMap() {
             if (map) map.remove();
             const defaultLat = -6.200000,
@@ -499,7 +532,6 @@
             });
         }
 
-        // Map Edit
         function initLeafletEditMap(lat, lng) {
             if (editMap) editMap.remove();
             editMap = L.map('editModalMap').setView([lat, lng], 15);
@@ -518,7 +550,6 @@
             });
         }
 
-        // Search Map Create
         document.getElementById('btnSearchMap').addEventListener('click', function() {
             const q = document.getElementById('mapSearchInput').value;
             if (!q) return alert('Ketik alamat dulu!');
@@ -535,7 +566,6 @@
                 });
         });
 
-        // Search Map Edit
         document.getElementById('btnEditSearchMap').addEventListener('click', function() {
             const q = document.getElementById('editMapSearchInput').value;
             if (!q) return alert('Ketik alamat dulu!');
@@ -554,14 +584,11 @@
                 });
         });
 
-        // ALPINE JS
         document.addEventListener('alpine:init', () => {
             Alpine.data('volunteerTable', () => ({
                 search: '',
                 isModalOpen: {{ $errors->any() && !old('_method') ? 'true' : 'false' }},
                 isEditModalOpen: {{ $errors->any() && old('_method') == 'PUT' ? 'true' : 'false' }},
-
-                // STATE UNTUK MODAL DELETE
                 isDeleteModalOpen: false,
 
                 editForm: {
@@ -594,7 +621,6 @@
                     }, 200);
                 },
 
-                // FUNGSI UNTUK MEMBUKA MODAL DELETE
                 openDeleteModal(volunteer) {
                     this.deleteForm = {
                         id: volunteer.id,

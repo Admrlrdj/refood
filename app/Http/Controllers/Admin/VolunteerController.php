@@ -81,22 +81,19 @@ class VolunteerController extends Controller
 
     public function verify($id)
     {
-        $volunteer = Volunteer::find($id);
-        if ($volunteer) {
-            $volunteer->is_verified = true;
-            $volunteer->save();
-            return back()->with('success', 'Akun relawan ' . $volunteer->name . ' berhasil diverifikasi!');
-        }
-        return back()->with('error', 'Data tidak ditemukan!');
+        $volunteer = Volunteer::findOrFail($id);
+        $volunteer->is_verified = true;
+        $volunteer->save();
+
+        return back()->with('success', 'Relawan berhasil diverifikasi!');
     }
 
     public function reject($id)
     {
-        $volunteer = Volunteer::find($id);
-        if ($volunteer) {
-            $volunteer->delete();
-            return back()->with('success', 'Pendaftaran relawan ditolak & dihapus.');
-        }
-        return back()->with('error', 'Data tidak ditemukan!');
+        $volunteer = Volunteer::findOrFail($id);
+        $volunteer->is_verified = false;
+        $volunteer->save();
+
+        return back()->with('success', 'Status relawan diubah menjadi Ditolak/Belum Terverifikasi.');
     }
 }
