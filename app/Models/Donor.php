@@ -14,13 +14,12 @@ class Donor extends Authenticatable
 
     protected $fillable = [
         'name',
-        'username',
-        'password',
         'phone',
         'email',
-        'address',
+        'password',
         'restaurant_name',
-        'is_verified'
+        'last_latitude',
+        'last_longitude',
     ];
     protected $hidden = ['password'];
 }
