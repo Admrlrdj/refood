@@ -49,8 +49,8 @@ class DonorController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'email' => 'required|string|email|max:255|unique:donors,email,' . $id . ',_id',
-            'last_latitude' => (float) $request->latitude,
-            'last_longitude' => (float) $request->longitude,
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
             'restaurant_name' => 'required|string|max:255',
         ]);
 
@@ -60,6 +60,11 @@ class DonorController extends Controller
         $donor->last_latitude = (float) $request->latitude;
         $donor->last_longitude = (float) $request->longitude;
         $donor->restaurant_name = $request->restaurant_name;
+
+        if ($request->filled('password')) {
+            $donor->password = Hash::make($request->password);
+        }
+        
         $donor->save();
 
         return redirect()->back()->with('success', 'Data Donatur berhasil diperbarui!');

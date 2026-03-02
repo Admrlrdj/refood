@@ -26,10 +26,10 @@ class MenuHelper
                 'icon' => 'user-profile', // Menggunakan icon profil bawaan
                 'name' => 'User Settings',
                 'subItems' => [
-                    ['name' => 'Donor', 'path' => '/admin/donors'],
-                    ['name' => 'Receiver', 'path' => '/admin/receivers'],
-                    ['name' => 'Volunteer', 'path' => '/admin/volunteers'],
-                    ['name' => 'Admin', 'path' => '/admin/users'],
+                    ['name' => 'Donors', 'path' => '/admin/donors'],
+                    ['name' => 'Receivers', 'path' => '/admin/receivers'],
+                    ['name' => 'Volunteers', 'path' => '/admin/volunteers'],
+                    ['name' => 'Admins', 'path' => '/admin/users'],
                 ],
             ],
             [

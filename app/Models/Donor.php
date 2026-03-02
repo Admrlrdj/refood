@@ -20,6 +20,7 @@ class Donor extends Authenticatable
         'restaurant_name',
         'last_latitude',
         'last_longitude',
+        'is_verified',
     ];
     protected $hidden = ['password'];
 }

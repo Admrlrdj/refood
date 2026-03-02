@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\VolunteerController;
 use App\Http\Controllers\Admin\DonorController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ReceiverController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,4 +41,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/admin/donors/{id}', [DonorController::class, 'destroy'])->name('admin.donors.destroy');
     Route::post('/admin/donors/{id}/verify', [DonorController::class, 'verify'])->name('admin.donors.verify');
     Route::post('/admin/donors/{id}/reject', [DonorController::class, 'reject'])->name('admin.donors.reject');
+
+    // -- ROUTE DATA RECEIVERS (PENERIMA/YAYASAN) --
+    Route::get('/admin/receivers', [ReceiverController::class, 'index'])->name('admin.receivers');
+    Route::post('/admin/receivers', [ReceiverController::class, 'store'])->name('admin.receivers.store');
+    Route::put('/admin/receivers/{id}', [ReceiverController::class, 'update'])->name('admin.receivers.update');
+    Route::delete('/admin/receivers/{id}', [ReceiverController::class, 'destroy'])->name('admin.receivers.destroy');
+
+    Route::post('/admin/receivers/{id}/verify', [ReceiverController::class, 'verify'])->name('admin.receivers.verify');
+    Route::post('/admin/receivers/{id}/reject', [ReceiverController::class, 'reject'])->name('admin.receivers.reject');
 });

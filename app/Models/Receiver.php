@@ -3,24 +3,28 @@
 namespace App\Models;
 
 use MongoDB\Laravel\Auth\User as Authenticatable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 
 class Receiver extends Authenticatable
 {
-    use HasApiTokens;
+    use Notifiable;
 
     protected $connection = 'mongodb';
     protected $collection = 'receivers';
 
     protected $fillable = [
-        'organization_name',
-        'username',
-        'password',
-        'contact_person',
+        'name',
         'phone',
-        'address',
-        'capacity',
-        'is_verified'
+        'email',
+        'password',
+        'last_latitude',
+        'last_longitude',
+        'foundation_name',
+        'is_verified',
     ];
-    protected $hidden = ['password'];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 }
