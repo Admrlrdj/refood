@@ -1,10 +1,8 @@
-@extends('admin.layouts.app')
+@extends('layouts.app')
 
 @section('content')
     @php
-        // Mapping agar data JSON aman masuk ke Alpine.js
         $mappedFoods = $foods->map(function ($f) use ($donors) {
-            // Cari nama restoran berdasarkan donor_id
             $donor = $donors->firstWhere('_id', $f->donor_id);
             return [
                 'id' => (string) $f->_id,
@@ -72,7 +70,7 @@
                         <thead>
                             <tr>
                                 <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">Makanan</th>
-                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">Restoran</th>
+                                <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">Restoran / Donatur</th>
                                 <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">Porsi</th>
                                 <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">Status</th>
                                 <th class="px-4 py-3 text-right text-sm font-medium text-gray-500">Aksi</th>
@@ -98,9 +96,11 @@
                                         <span x-show="f.status == 'delivered'"
                                             class="px-2 py-1 bg-brand-50 text-brand-600 text-xs rounded-full">Selesai</span>
                                     </td>
-                                    <td class="px-4 py-4 text-right space-x-2">
-                                        <button @click="openEditModal(f)" class="text-warning-500 text-sm">Edit</button>
-                                        <button @click="openDeleteModal(f)" class="text-error-500 text-sm">Hapus</button>
+                                    <td class="px-4 py-4 text-right space-x-3">
+                                        <button @click="openEditModal(f)"
+                                            class="text-warning-500 hover:underline text-sm font-medium">Edit</button>
+                                        <button @click="openDeleteModal(f)"
+                                            class="text-error-500 hover:underline text-sm font-medium">Hapus</button>
                                     </td>
                                 </tr>
                             </template>
@@ -113,8 +113,80 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Copy logic Leaflet dari index Volunteer/Donor sebelumnya ke sini
-        // ... (initLeafletMap, initLeafletEditMap) ...
+        let map, marker, editMap, editMarker;
+
+        function initLeafletMap() {
+            if (map) map.remove();
+            const defaultLat = -6.200000,
+                defaultLng = 106.816666;
+            map = L.map('modalMap').setView([defaultLat, defaultLng], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            marker = L.marker([defaultLat, defaultLng], {
+                draggable: true
+            }).addTo(map);
+
+            document.getElementById('inputLatitude').value = defaultLat;
+            document.getElementById('inputLongitude').value = defaultLng;
+
+            marker.on('dragend', function(e) {
+                const pos = marker.getLatLng();
+                document.getElementById('inputLatitude').value = pos.lat;
+                document.getElementById('inputLongitude').value = pos.lng;
+                map.panTo(pos);
+            });
+        }
+
+        function initLeafletEditMap(lat, lng) {
+            if (editMap) editMap.remove();
+            editMap = L.map('editModalMap').setView([lat, lng], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(editMap);
+            editMarker = L.marker([lat, lng], {
+                draggable: true
+            }).addTo(editMap);
+
+            editMarker.on('dragend', function(e) {
+                const pos = editMarker.getLatLng();
+                document.getElementById('editInputLatitude').value = pos.lat;
+                document.getElementById('editInputLongitude').value = pos.lng;
+                document.getElementById('editInputLatitude').dispatchEvent(new Event('input'));
+                document.getElementById('editInputLongitude').dispatchEvent(new Event('input'));
+                editMap.panTo(pos);
+            });
+        }
+
+        document.getElementById('btnSearchMap')?.addEventListener('click', function() {
+            const q = document.getElementById('mapSearchInput').value;
+            if (!q) return alert('Ketik alamat dulu!');
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`)
+                .then(r => r.json()).then(d => {
+                    if (d.length > 0) {
+                        const lat = parseFloat(d[0].lat),
+                            lon = parseFloat(d[0].lon);
+                        map.setView([lat, lon], 16);
+                        marker.setLatLng([lat, lon]);
+                        document.getElementById('inputLatitude').value = lat;
+                        document.getElementById('inputLongitude').value = lon;
+                    } else alert('Alamat tidak ditemukan.');
+                });
+        });
+
+        document.getElementById('btnEditSearchMap')?.addEventListener('click', function() {
+            const q = document.getElementById('editMapSearchInput').value;
+            if (!q) return alert('Ketik alamat dulu!');
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`)
+                .then(r => r.json()).then(d => {
+                    if (d.length > 0) {
+                        const lat = parseFloat(d[0].lat),
+                            lon = parseFloat(d[0].lon);
+                        editMap.setView([lat, lon], 16);
+                        editMarker.setLatLng([lat, lon]);
+                        document.getElementById('editInputLatitude').value = lat;
+                        document.getElementById('editInputLongitude').value = lon;
+                        document.getElementById('editInputLatitude').dispatchEvent(new Event('input'));
+                        document.getElementById('editInputLongitude').dispatchEvent(new Event('input'));
+                    } else alert('Alamat tidak ditemukan.');
+                });
+        });
 
         document.addEventListener('alpine:init', () => {
             Alpine.data('foodTable', () => ({
@@ -143,15 +215,37 @@
                     this.editForm = {
                         ...food
                     };
+                    this.editForm.latitude = food.latitude || -6.200000;
+                    this.editForm.longitude = food.longitude || 106.816666;
                     this.isEditModalOpen = true;
-                    // setTimeout(() => initLeafletEditMap(food.latitude, food.longitude), 200);
+                    // Jeda agar element DOM modal terbuka sebelum render peta
+                    setTimeout(() => {
+                        if (document.getElementById('editModalMap')) {
+                            initLeafletEditMap(this.editForm.latitude, this.editForm.longitude);
+                            if (editMap) editMap.invalidateSize();
+                        }
+                    }, 250);
                 },
+
                 openDeleteModal(food) {
                     this.deleteForm = {
                         id: food.id,
                         name: food.name
                     };
                     this.isDeleteModalOpen = true;
+                },
+
+                init() {
+                    this.$watch('isModalOpen', (val) => {
+                        if (val) {
+                            setTimeout(() => {
+                                if (document.getElementById('modalMap')) {
+                                    initLeafletMap();
+                                    if (map) map.invalidateSize();
+                                }
+                            }, 250);
+                        }
+                    });
                 }
             }));
         });
