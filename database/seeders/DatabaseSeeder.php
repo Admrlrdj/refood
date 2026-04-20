@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
         //     'last_longitude' => 106.799566,
         // ]);
 
-        // Volunteer::create([
+        // Vol  unteer::create([
         //     'name' => 'Oji Kurir',
         //     'username' => 'oji_kurir',
         //     'password' => Hash::make('password123'),

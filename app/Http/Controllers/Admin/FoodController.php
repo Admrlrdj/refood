@@ -12,9 +12,10 @@ class FoodController extends Controller
     public function index()
     {
         $foods = Food::orderBy('created_at', 'desc')->get();
-        $donors = Donor::where('is_verified', true)->get(); // Ambil donatur yg udah di-ACC
-
-        return view('admin.pages.foods.index', compact('foods', 'donors'));
+        $donors = Donor::where('is_verified', true)->get(); // <-- PASTIKAN BARIS INI ADA
+        
+        // Pastikan 'donors' masuk ke dalam compact di bawah ini:
+        return view('admin.pages.foods.index', compact('foods', 'donors')); 
     }
 
     public function store(Request $request)
