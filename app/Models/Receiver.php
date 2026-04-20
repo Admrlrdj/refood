@@ -20,6 +20,7 @@ class Receiver extends Authenticatable
         'last_latitude',
         'last_longitude',
         'foundation_name',
+        'capacity',
         'is_verified',
     ];
 

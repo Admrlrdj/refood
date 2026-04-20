@@ -11,7 +11,7 @@
                 'restaurant_name' => $d->restaurant_name,
                 'latitude' => $d->last_latitude,
                 'longitude' => $d->last_longitude,
-                'is_verified' => (bool) $d->is_verified, // <-- Mapping is_verified
+                'is_verified' => (bool) $d->is_verified,
             ];
         });
     @endphp

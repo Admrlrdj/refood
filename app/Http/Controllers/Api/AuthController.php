@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Volunteer;
+use App\Models\Donor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -73,5 +74,35 @@ class AuthController extends Controller
             'token' => $token,
             'user' => $volunteer
         ]);
+    }
+
+    public function loginDonor(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        $donor = Donor::where('email', $request->email)->first();
+
+        // Cek email, password, dan status verifikasi
+        if (!$donor || !Hash::check($request->password, $donor->password)) {
+            return $this->sendError('Email atau Password salah.', [], 401);
+        }
+
+        if (!$donor->is_verified) {
+            return $this->sendError('Akun belum diverifikasi oleh Admin.', [], 403);
+        }
+
+        // Buat Token Sanctum
+        $token = $donor->createToken('donor_auth_token')->plainTextToken;
+
+        $data = [
+            'donor' => $donor,
+            'access_token' => $token,
+            'token_type' => 'Bearer'
+        ];
+
+        return $this->sendResponse($data, 'Login berhasil.');
     }
 }

@@ -1,13 +1,18 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\VolunteerController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Route Terbuka (Public)
+Route::post('/login/donor', [AuthController::class, 'loginDonor']);
+Route::get('/volunteers', [VolunteerController::class, 'index']);
+Route::get('/volunteers/{id}', [VolunteerController::class, 'show']);
 
-// Route Auth Relawan
-Route::post('/register/volunteer', [AuthController::class, 'registerVolunteer']);
-Route::post('/login/volunteer', [AuthController::class, 'loginVolunteer']);
+// Route Tertutup (Hanya bisa diakses Flutter jika mengirimkan Token Login)
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Relawan update lokasi dirinya sendiri
+    Route::post('/volunteers/{id}/location', [VolunteerController::class, 'updateLocation']);
+});
+    

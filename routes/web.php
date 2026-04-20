@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\VolunteerController;
 use App\Http\Controllers\Admin\DonorController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ReceiverController;
+use App\Http\Controllers\Admin\FoodController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -50,4 +51,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/admin/receivers/{id}/verify', [ReceiverController::class, 'verify'])->name('admin.receivers.verify');
     Route::post('/admin/receivers/{id}/reject', [ReceiverController::class, 'reject'])->name('admin.receivers.reject');
+
+    // -- ROUTE DATA MAKANAN (FOODS) --
+    Route::get('/admin/foods', [FoodController::class, 'index'])->name('admin.foods');
+    Route::post('/admin/foods', [FoodController::class, 'store'])->name('admin.foods.store');
+    Route::put('/admin/foods/{id}', [FoodController::class, 'update'])->name('admin.foods.update');
+    Route::delete('/admin/foods/{id}', [FoodController::class, 'destroy'])->name('admin.foods.destroy');
 });

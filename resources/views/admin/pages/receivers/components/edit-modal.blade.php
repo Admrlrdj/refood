@@ -54,6 +54,14 @@
                     class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:text-white">
             </div>
 
+            <div>
+                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Kapasitas
+                    (Orang)</label>
+                <input type="number" name="capacity" x-model="editForm.capacity" required min="1"
+                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:text-white"
+                    placeholder="Jumlah kapasitas panti">
+            </div>
+
             <div class="pt-2 border-t border-gray-100 dark:border-gray-800">
                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Ubah Titik Lokasi
                     Peta</label>

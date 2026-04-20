@@ -11,6 +11,7 @@
                 'foundation_name' => $r->foundation_name,
                 'latitude' => $r->last_latitude,
                 'longitude' => $r->last_longitude,
+                'capacity' => $r->capacity,
                 'is_verified' => (bool) $r->is_verified,
             ];
         });
@@ -134,6 +135,9 @@
                                         Titik Lokasi</th>
                                     <th
                                         class="px-4 py-3 font-medium text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                        Kapasitas</th>
+                                    <th
+                                        class="px-4 py-3 font-medium text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                         Status</th>
                                     <th
                                         class="px-4 py-3 font-medium text-gray-500 text-end text-theme-sm dark:text-gray-400">
@@ -178,6 +182,10 @@
                                                 </template>
                                             </div>
                                         </td>
+
+                                        <td class="px-4 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500 dark:text-gray-400"
+                                                x-text="r.capacity + ' orang'"></div>
 
                                         <td class="px-4 py-4 whitespace-nowrap">
                                             <template x-if="r.is_verified">
@@ -407,7 +415,7 @@
                     if (this.search === '') return this.allItems;
                     return this.allItems.filter(item =>
                         item.foundation_name.toLowerCase().includes(this.search
-                    .toLowerCase()) ||
+                            .toLowerCase()) ||
                         item.name.toLowerCase().includes(this.search.toLowerCase()) ||
                         item.email.toLowerCase().includes(this.search.toLowerCase())
                     );

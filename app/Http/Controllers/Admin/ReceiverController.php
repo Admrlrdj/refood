@@ -25,6 +25,7 @@ class ReceiverController extends Controller
             'foundation_name' => 'required|string|max:255',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'capacity' => 'required|integer|min:1',
         ]);
 
         Receiver::create([
@@ -35,6 +36,7 @@ class ReceiverController extends Controller
             'foundation_name' => $request->foundation_name,
             'last_latitude' => (float) $request->latitude,
             'last_longitude' => (float) $request->longitude,
+            'capacity' => $request->capacity,
             'is_verified' => true,
         ]);
 
@@ -52,6 +54,7 @@ class ReceiverController extends Controller
             'foundation_name' => 'required|string|max:255',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'capacity' => 'required|integer|min:1',
         ]);
 
         $receiver->name = $request->name;
@@ -60,6 +63,7 @@ class ReceiverController extends Controller
         $receiver->foundation_name = $request->foundation_name;
         $receiver->last_latitude = (float) $request->latitude;
         $receiver->last_longitude = (float) $request->longitude;
+        $receiver->capacity = $request->capacity;
 
         if ($request->filled('password')) {
             $receiver->password = Hash::make($request->password);
